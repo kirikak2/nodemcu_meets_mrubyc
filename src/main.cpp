@@ -9,32 +9,6 @@ unsigned char buff[10 * 1024];
 static int first = 0;
 static struct VM *vm;
 
-void mrubyc(uint8_t *mrbbuf)
-{
-    if (mrbc_load_mrb(vm, mrbbuf) != 0)
-    {
-        Serial.println("mrbc_load_mrb error");
-        return;
-    }
-
-    if (!first)
-    {
-        mrbc_vm_begin(vm);
-    }
-    else
-    {
-        vm->pc_irep = vm->irep;
-        vm->pc = 0;
-        vm->current_regs = vm->regs;
-        vm->flag_preemption = 0;
-        vm->callinfo_top = 0;
-        vm->error_code = 0;
-    }
-    mrbc_vm_run(vm);
-    if (first == 0)
-        first = 1;
-}
-
 void setup()
 {
     Serial.begin(9600);
@@ -57,17 +31,15 @@ void setup()
         Serial.println("Error: Illegal bytecode.\n");
         return;
     }
+    return;
+}
 
+void loop()
+{
     Serial.println("VM start.\n");
     mrbc_vm_begin(vm);
     mrbc_vm_run(vm);
     mrbc_vm_end(vm);
     mrbc_vm_close(vm);
 
-    return;
-}
-
-void loop()
-{
-    delay(1000);
 }

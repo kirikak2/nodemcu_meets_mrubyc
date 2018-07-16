@@ -34,6 +34,14 @@ static uint8_t sym_to_pinmode(mrb_sym sym_in)
   {
     mode = INPUT_PULLUP;
   }
+  else if( sym_in == str_to_symid("HIGH"))
+  {
+    mode = HIGH;
+  }
+  else if(sym_in == str_to_symid("LOW"))
+  {
+    mode = LOW;
+  }
   return mode;
 }
 static void class_arduino_pin_mode(mrb_vm *vm, mrb_value *v, int argc)
@@ -73,7 +81,7 @@ static void class_arduino_pin_mode(mrb_vm *vm, mrb_value *v, int argc)
   SET_TRUE_RETURN();
 }
 
-static void class_arduino_digital_wirte(mrb_vm *vm, mrb_value *v, int argc)
+static void class_arduino_digital_write(mrb_vm *vm, mrb_value *v, int argc)
 {
   int pin = 0;
   if (GET_TT_ARG(1) == MRB_TT_FIXNUM)
@@ -101,6 +109,7 @@ static void class_arduino_digital_wirte(mrb_vm *vm, mrb_value *v, int argc)
   }
   uint8_t mode = sym_to_pinmode(sym_in);
 
+  Serial.printf("pin=%d mode=%d\n", pin, mode);
   digitalWrite(pin, mode);
   SET_TRUE_RETURN();
 }
@@ -173,7 +182,7 @@ void define_arduino_class()
   class_arduino = mrbc_define_class(0, "Arduino", mrbc_class_object);
   mrbc_define_method(0, class_arduino, "delay", class_arduino_delay);
   mrbc_define_method(0, class_arduino, "pin_mode", class_arduino_pin_mode);
-  mrbc_define_method(0, class_arduino, "digital_write", class_arduino_digital_wirte);
+  mrbc_define_method(0, class_arduino, "digital_write", class_arduino_digital_write);
   mrbc_define_method(0, class_arduino, "digital_read", class_arduino_digital_read);
   mrbc_define_method(0, class_arduino, "random", class_arduino_random);
 }
