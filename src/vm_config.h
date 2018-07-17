@@ -32,7 +32,7 @@
 
 /* maximum number of objects */
 #ifndef MAX_OBJECT_COUNT
-#define MAX_OBJECT_COUNT 400
+#define MAX_OBJECT_COUNT 200
 #endif
 
 /* maximum number of classes */
@@ -42,7 +42,7 @@
 
 /* maximum number of symbols */
 #ifndef MAX_SYMBOLS_COUNT
-#define MAX_SYMBOLS_COUNT 200
+#define MAX_SYMBOLS_COUNT 100
 #endif
 
 /* maximum size of global objects */
