@@ -4,6 +4,6 @@
 #include "mrubyc.h"
 #include "libmrubyc_config.h"
 
-void mrbc_define_methods();
+void mrbc_define_methods(mrb_vm *vm);
 
 #endif

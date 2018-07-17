@@ -19,8 +19,9 @@ bool mrbc_trans_cppbool_value(mrb_vtype tt)
   return false;
 }
 
-void mrbc_define_methods()
+void mrbc_define_methods(mrb_vm *vm)
 {
   define_arduino_class();
   define_serial_class();
+  define_oled_class(vm);
 }

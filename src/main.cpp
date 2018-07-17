@@ -25,7 +25,7 @@ void setup()
         return;
     }
 
-    mrbc_define_methods();
+    mrbc_define_methods(vm);
     if (mrbc_load_mrb(vm, ary) != 0)
     {
         Serial.println("Error: Illegal bytecode.\n");
