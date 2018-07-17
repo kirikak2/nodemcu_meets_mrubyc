@@ -31,15 +31,14 @@ void setup()
         Serial.println("Error: Illegal bytecode.\n");
         return;
     }
+    mrbc_vm_begin(vm);
+    mrbc_vm_run(vm);
+    mrbc_vm_end(vm);
+    mrbc_vm_close(vm);
     return;
 }
 
 void loop()
 {
-    Serial.println("VM start.\n");
-    mrbc_vm_begin(vm);
-    mrbc_vm_run(vm);
-    mrbc_vm_end(vm);
-    mrbc_vm_close(vm);
-
+    delay(100);
 }

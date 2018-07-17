@@ -11,8 +11,9 @@
 #include "mrubyc_for_ESP8266_Arduino.h"
 #include "ext.h"
 
+SSD_13XX *oled;
+
 static void class_oled_new(mrb_vm *vm, mrb_value *v, int argc) {
-  SSD_13XX *oled;
   uint8_t errorCode = 0;
 
   int32_t cs1, dc;
@@ -25,13 +26,14 @@ static void class_oled_new(mrb_vm *vm, mrb_value *v, int argc) {
     }
 
     if(GET_TT_ARG(2) == MRB_TT_FIXNUM) {
-      dc = GET_INT_ARG(1);
+      dc = GET_INT_ARG(2);
     } else {
       return;
     }
   } else {
     return;
   }
+  Serial.printf("cs1 = %d dc= %d\n", cs1, dc);
   oled = new SSD_13XX(cs1, dc);
   oled->begin();
 
@@ -46,17 +48,11 @@ static void class_oled_new(mrb_vm *vm, mrb_value *v, int argc) {
     }
     return;
   }
-  mrb_value ret = {.tt = MRB_TT_HANDLE};
-  ret.handle = (RObject*)oled;
-  oled->clearScreen();
-  oled->print("Hello World");
-  SET_RETURN(ret);
 }
 
 static void class_oled_print(mrb_vm *vm, mrb_value *v, int argc) {
-  Serial.println("call OLED print");
   if(GET_TT_ARG(1) == MRB_TT_STRING) {
-    ((SSD_13XX*)v->handle)->print((const char *)GET_STRING_ARG(1));
+    oled->print((const char *)GET_STRING_ARG(1));
   }
 }
 
