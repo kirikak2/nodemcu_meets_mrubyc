@@ -1,11 +1,9 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "mrubyc_for_ESP8266_Arduino.h"
-extern "C" {
-    #include "user_interface.h"
-}
+#include "user_interface.h"
 
-#define MEMORY_SIZE (1024 * 10)
+#define MEMORY_SIZE (1024 * 20)
 static uint8_t memory_pool[MEMORY_SIZE];
 unsigned char buff[10 * 1024];
 int buff_ptr = 0;
@@ -38,6 +36,9 @@ void setup()
     IPAddress myAddress = WiFi.localIP();
     Serial.println(myAddress);
 
+    // initialize mruby/c
+    mrbc_init_alloc(memory_pool, MEMORY_SIZE);
+    init_static();
     vm = mrbc_vm_open(NULL);
     if (vm == NULL)
     {
@@ -45,9 +46,6 @@ void setup()
         return;
     }
 
-    // initialize mruby/c
-    mrbc_init_alloc(memory_pool, MEMORY_SIZE);
-    init_static();
     mrbc_define_methods();
 
     server.begin();
