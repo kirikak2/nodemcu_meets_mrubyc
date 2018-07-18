@@ -55,6 +55,7 @@ void setup()
 void loop()
 {
     WiFiClient client = server.available();
+    client.setTimeout(1000);
     if(client) {
         while(client.connected()) {
             read_message(client);
@@ -100,6 +101,7 @@ int read_message(WiFiClient& client) {
             continue;
         }
         if(size < remain) {
+            delay(10);
             remain -= size;
             continue;
         }
@@ -117,6 +119,7 @@ int read_message(WiFiClient& client) {
         }
         if(size < remain) {
             remain -= size;
+            delay(10);
             continue;
         }
         mrubyc(&buff[buff_ptr]);
