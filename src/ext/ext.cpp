@@ -23,4 +23,5 @@ void mrbc_define_methods()
 {
   define_arduino_class();
   define_serial_class();
+  define_oled_class();
 }

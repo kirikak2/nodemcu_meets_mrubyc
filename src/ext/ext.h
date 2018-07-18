@@ -16,4 +16,5 @@ bool mrbc_trans_cppbool_value(mrb_vtype tt);
 
 void define_arduino_class();
 void define_serial_class();
+void define_oled_class();
 #endif
