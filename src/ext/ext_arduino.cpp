@@ -127,7 +127,60 @@ static void class_arduino_digital_read(mrb_vm *vm, mrb_value *v, int argc)
   }
   uint8_t mode = INPUT;
   mode = digitalRead(pin);
+  Serial.printf("pin=%d, mode=%d\n", pin, mode);
   SET_INT_RETURN(mode);
+}
+
+static void class_arduino_analog_write(mrb_vm *vm, mrb_value *v, int argc) {
+  int pin = 0;
+  int value = 0;
+  if(argc == 2 && GET_TT_ARG(1) == MRB_TT_FIXNUM && GET_TT_ARG(2) == MRB_TT_FIXNUM) {
+    pin = GET_INT_ARG(1);
+    value = GET_INT_ARG(2);
+  } else {
+    SET_FALSE_RETURN();
+    return;
+  }
+  analogWrite(pin, value);
+  SET_TRUE_RETURN();
+  return;
+}
+
+static void class_arduino_analog_read(mrb_vm *vm, mrb_value *v, int argc) {
+  int pin = 0;
+  int value = 0;
+  if(argc == 1 && GET_TT_ARG(1) == MRB_TT_FIXNUM) {
+    pin = GET_INT_ARG(1);
+  } else {
+    SET_FALSE_RETURN();
+    return;
+  }
+  value = analogRead(pin);
+  Serial.printf("pin = %d, value = %d\n", pin, value);
+  SET_INT_RETURN(value);
+  return;
+}
+
+static void class_arduino_tone(mrb_vm *vm, mrb_value *v, int argc) {
+  int pin = 0;
+  int frequency = 0;
+  if(argc == 2 && GET_TT_ARG(1) == MRB_TT_FIXNUM && GET_TT_ARG(2) == MRB_TT_FIXNUM) {
+    pin = GET_INT_ARG(1);
+    frequency = GET_INT_ARG(2);
+    tone(pin, frequency);
+    SET_TRUE_RETURN();
+  } else if(argc == 3 && GET_TT_ARG(1) == MRB_TT_FIXNUM &&
+      GET_TT_ARG(2) == MRB_TT_FIXNUM && GET_TT_ARG(3) == MRB_TT_FIXNUM) {
+    pin = GET_INT_ARG(1);
+    frequency = GET_INT_ARG(2);
+    long duration = GET_INT_ARG(3);
+    tone(pin, frequency, duration);
+    SET_TRUE_RETURN();
+  } else {
+    SET_FALSE_RETURN();
+    return;
+  }
+  return;
 }
 
 static void class_arduino_random(mrb_vm *vm, mrb_value *v, int argc)
@@ -184,6 +237,9 @@ void define_arduino_class()
   mrbc_define_method(0, class_arduino, "pin_mode", class_arduino_pin_mode);
   mrbc_define_method(0, class_arduino, "digital_write", class_arduino_digital_write);
   mrbc_define_method(0, class_arduino, "digital_read", class_arduino_digital_read);
+  mrbc_define_method(0, class_arduino, "analog_write", class_arduino_analog_write);
+  mrbc_define_method(0, class_arduino, "analog_read", class_arduino_analog_read);
+  mrbc_define_method(0, class_arduino, "tone", class_arduino_tone);
   mrbc_define_method(0, class_arduino, "random", class_arduino_random);
 }
 

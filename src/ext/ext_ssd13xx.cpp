@@ -231,7 +231,7 @@ void define_oled_class()
 {
   mrb_class *class_oled;
   class_oled = mrbc_define_class(0, "Oled", mrbc_class_object);
-  mrbc_define_method(0, class_oled, "new", class_oled_new);
+  mrbc_define_method(0, class_oled, "initialize", class_oled_new);
   mrbc_define_method(0, class_oled, "color", class_oled_color);
 //  mrbc_define_method(0, class_oled, "rotation=", class_oled_set_rotation);
 //  mrbc_define_method(0, class_oled, "rotation", class_oled_get_rotation);

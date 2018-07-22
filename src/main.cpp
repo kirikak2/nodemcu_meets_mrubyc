@@ -50,6 +50,7 @@ void setup()
 
     server.begin();
     Serial.println("Server started");
+    Serial.printf("%d bytes memory available\n", system_get_free_heap_size());
 }
 
 void loop()
@@ -85,6 +86,7 @@ void mrubyc(uint8_t *mrbbuf) {
         vm->error_code = 0;
     }
     mrbc_vm_run(vm);
+    Serial.printf("%d bytes memory available\n", system_get_free_heap_size());
     if(first == 0) first = 1;
 }
 
