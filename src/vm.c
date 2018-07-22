@@ -31,6 +31,8 @@
 #include "c_array.h"
 #include "c_hash.h"
 
+#include <Arduino.h>
+
 
 static uint32_t free_vm_bitmap[MAX_VM_COUNT / 32 + 1];
 #define FREE_BITMAP_WIDTH 32
@@ -131,6 +133,9 @@ void mrbc_pop_callinfo(mrb_vm *vm)
   mrb_callinfo *callinfo = vm->callinfo + vm->callinfo_top;
   vm->current_regs = callinfo->current_regs;
   vm->pc_irep = callinfo->pc_irep;
+  char msg[128];
+  sprintf(msg, "(1)vm->pc_irep = %p\n", vm->pc_irep);
+  hal_write_string(msg);
   vm->pc = callinfo->pc;
   vm->target_class = callinfo->target_class;
 }
@@ -679,6 +684,9 @@ inline static int op_send( mrb_vm *vm, uint32_t code, mrb_value *regs )
   // target irep
   vm->pc = 0;
   vm->pc_irep = m->irep;
+  char msg[128];
+  sprintf(msg, "(2)vm->pc_irep = %p\n", vm->pc_irep);
+  hal_write_string(msg);
 
   // new regs
   vm->current_regs += ra;
@@ -705,6 +713,9 @@ inline static int op_call( mrb_vm *vm, uint32_t code, mrb_value *regs )
   // jump to proc
   vm->pc = 0;
   vm->pc_irep = regs[0].proc->irep;
+  char msg[128];
+  sprintf(msg, "(3)vm->pc_irep = %p\n", vm->pc_irep);
+  hal_write_string(msg);
 
   return 0;
 }
@@ -769,6 +780,9 @@ inline static int op_return( mrb_vm *vm, uint32_t code, mrb_value *regs )
   // }
   // restore others
   vm->pc_irep = callinfo->pc_irep;
+  char msg[128];
+  sprintf(msg, "(4)vm->pc_irep = %p\n", vm->pc_irep);
+  hal_write_string(msg);
   vm->pc = callinfo->pc;
   vm->target_class = callinfo->target_class;
   return 0;
@@ -1432,6 +1446,10 @@ inline static int op_lambda( mrb_vm *vm, uint32_t code, mrb_value *regs )
 
   proc->c_func = 0;
   proc->irep = vm->pc_irep->reps[rb];
+  char msg[128];
+  sprintf(msg, "proc->irep = %p vm->pc_irep->reps[rb] = %p ra = %d, rb = %d\n",
+    proc->irep, vm->pc_irep->reps[rb], ra, rb);
+  hal_write_string(msg);
 
   mrbc_release(&regs[ra]);
   regs[ra].tt = MRB_TT_PROC;
@@ -1534,6 +1552,9 @@ inline static int op_exec( mrb_vm *vm, uint32_t code, mrb_value *regs )
   // target irep
   vm->pc = 0;
   vm->pc_irep = vm->irep->reps[rb];
+  char msg[128];
+  sprintf(msg, "(5)vm->pc_irep = %p\n", vm->pc_irep);
+  hal_write_string(msg);
 
   // new regs
   vm->current_regs += ra;
@@ -1773,6 +1794,15 @@ int mrbc_vm_run( mrb_vm *vm )
 
   do {
     // get one bytecode
+    char msg[128];
+    sprintf(msg, "pc_irep= %p ", vm->pc_irep);
+    hal_write_string(msg);
+    sprintf(msg, "code = %p ", vm->pc_irep->code);
+    hal_write_string(msg);
+    sprintf(msg, "pc= %u ", vm->pc);
+    hal_write_string(msg);
+    sprintf(msg, "current_regs= %p ", vm->current_regs);
+    hal_write_string(msg);
     uint32_t code = bin_to_uint32(vm->pc_irep->code + vm->pc * 4);
     vm->pc++;
 
@@ -1781,6 +1811,9 @@ int mrbc_vm_run( mrb_vm *vm )
 
     // Dispatch
     int opcode = GET_OPCODE(code);
+    sprintf(msg, "opcode = %#x, A = %d, sBx = %x, Bx = %x \n",
+      opcode, regs[GETARG_A(code)].tt, GETARG_sBx(code), GETARG_Bx(code));
+    hal_write_string(msg);
     switch( opcode ) {
     case OP_NOP:        ret = op_nop       (vm, code, regs); break;
     case OP_MOVE:       ret = op_move      (vm, code, regs); break;
