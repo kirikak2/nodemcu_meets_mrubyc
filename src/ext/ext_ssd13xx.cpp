@@ -69,6 +69,31 @@ static void class_oled_print(mrb_vm *vm, mrb_value *v, int argc) {
   }
 }
 
+static void class_oled_define_scroll_area(mrb_vm *vm, mrb_value *v, int argc) {
+  if(argc == 5 &&
+    GET_TT_ARG(1) == MRB_TT_FIXNUM && GET_TT_ARG(2) == MRB_TT_FIXNUM &&
+    GET_TT_ARG(3) == MRB_TT_FIXNUM && GET_TT_ARG(4) == MRB_TT_FIXNUM &&
+    GET_TT_ARG(5) == MRB_TT_FIXNUM) {
+      uint16_t a = GET_INT_ARG(1);
+      uint16_t b = GET_INT_ARG(2);
+      uint16_t c = GET_INT_ARG(3);
+      uint16_t d = GET_INT_ARG(4);
+      uint16_t e = GET_INT_ARG(5);
+      oled->defineScrollArea(a, b, c, d, e);
+  } 
+}
+
+static void class_oled_scroll(mrb_vm *vm, mrb_value *v, int argc) {
+  if(argc == 1 && GET_TT_ARG(1) == MRB_TT_FIXNUM) {
+    int flag = GET_INT_ARG(1);
+    if(flag == 0) {
+      oled->scroll(false);
+    } else {
+      oled->scroll(true);
+    }
+  }
+}
+
 static void class_oled_fill_screen(mrb_vm *vm, mrb_value *v, int argc) {
 }
 
@@ -259,8 +284,8 @@ void define_oled_class()
 //  mrbc_define_method(0, class_oled, "text_wrap", class_oled_set_text_wrap);
 //  mrbc_define_method(0, class_oled, "set_char_spacing", class_oled_set_char_spacing);
   mrbc_define_method(0, class_oled, "print", class_oled_print);
-//  mrbc_define_method(0, class_oled, "define_scroll_area", class_oled_define_scroll_area);
-//  mrbc_define_method(0, class_oled, "scroll", class_oled_scroll);
+  mrbc_define_method(0, class_oled, "define_scroll_area", class_oled_define_scroll_area);
+  mrbc_define_method(0, class_oled, "scroll", class_oled_scroll);
 //  mrbc_define_method(0, class_oled, "cursor=", class_oled_set_cursor);
 //  mrbc_define_method(0, class_oled, "cursor", class_oled_get_cursor);
   mrbc_define_method(0, class_oled, "close", class_oled_close);
